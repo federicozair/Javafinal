@@ -10,22 +10,31 @@ import java.util.Optional;
 
 @Service
 public class VentaService {
-    @Autowired
-    private VentaRepository ventaRepository;
 
-    public List<Venta> getAllVentas() {
-        return ventaRepository.findAll();
-    }
+  private final VentaRepository ventaRepository;
 
-    public Optional<Venta> getVentaById(Long id) {
-        return ventaRepository.findById(id);
-    }
+  @Autowired
+  public VentaService(VentaRepository ventaRepository) {
+    this.ventaRepository = ventaRepository;
+  }
 
-    public Venta saveVenta(Venta venta) {
-        return ventaRepository.save(venta);
-    }
+  public List<Venta> findAll() {
+    return ventaRepository.findAll();
+  }
 
-    public void deleteVenta(Long id) {
-        ventaRepository.deleteById(id);
+  public Optional<Venta> findById(Long id) {
+    return ventaRepository.findById(id);
+  }
+
+  public Venta save(Venta venta) {
+    return ventaRepository.save(venta);
+  }
+
+  public void deleteById(Long id) {
+    if (ventaRepository.existsById(id)) {
+      ventaRepository.deleteById(id);
+    } else {
+      throw new RuntimeException("Venta no encontrada con ID: " + id);
     }
+  }
 }

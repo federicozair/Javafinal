@@ -10,22 +10,41 @@ import java.util.Optional;
 
 @Service
 public class ProductoService {
-    @Autowired
-    private ProductoRepository productoRepository;
 
-    public List<Producto> getAllProductos() {
-        return productoRepository.findAll();
-    }
+  private final ProductoRepository productoRepository;
 
-    public Optional<Producto> getProductoById(Long id) {
-        return productoRepository.findById(id);
-    }
+  @Autowired
+  public ProductoService(ProductoRepository productoRepository) {
+    this.productoRepository = productoRepository;
+  }
 
-    public Producto saveProducto(Producto producto) {
-        return productoRepository.save(producto);
-    }
+  public List<Producto> findAll() {
+    return productoRepository.findAll();
+  }
 
-    public void deleteProducto(Long id) {
-        productoRepository.deleteById(id);
+  public Optional<Producto> findById(Long id) {
+    return productoRepository.findById(id);
+  }
+
+  public Producto save(Producto producto) {
+    return productoRepository.save(producto);
+  }
+
+  public void deleteById(Long id) {
+    if (productoRepository.existsById(id)) {
+      productoRepository.deleteById(id);
+    } else {
+      throw new RuntimeException("Producto no encontrado con ID: " + id);
     }
+  }
+
+  public void updateProductoStock(Producto producto) {
+    System.out.println("Actualizando stock para el producto ID: " + producto.getId());
+    if (productoRepository.existsById(producto.getId())) {
+      productoRepository.save(producto);
+      System.out.println("Stock actualizado para el producto: " + producto.getId());
+    } else {
+      throw new RuntimeException("Producto no encontrado con ID: " + producto.getId());
+    }
+  }
 }
